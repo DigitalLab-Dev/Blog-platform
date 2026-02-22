@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
             title: post.meta_title || post.title,
             description: post.meta_description || post.excerpt,
             type: 'article',
-            publishedTime: post.published_at,
+            publishedTime: post.published_at || post.created_at || new Date().toISOString(),
             images: post.featured_image ? [post.featured_image] : [],
         },
     };
@@ -53,7 +53,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     }
 
     const formatDate = (date: string) => {
-        return new Date(date).toLocaleDateString('en-US', {
+        const d = date ? new Date(date) : new Date();
+        const validDate = isNaN(d.getTime()) ? new Date() : d;
+        return validDate.toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
@@ -67,8 +69,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         headline: post.title,
         description: post.excerpt,
         image: post.featured_image,
-        datePublished: post.published_at,
-        dateModified: post.updated_at,
+        datePublished: post.published_at || post.created_at || new Date().toISOString(),
+        dateModified: post.updated_at || post.created_at || new Date().toISOString(),
         author: {
             '@type': 'Person',
             name: 'The Blogtide Team',
@@ -88,7 +90,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                     <div className="mb-6">
                         <div className="flex items-center text-sm text-gray-500 mb-4">
                             <Calendar className="h-4 w-4 mr-2" />
-                            <time dateTime={post.published_at}>{formatDate(post.published_at)}</time>
+                            <time dateTime={post.published_at || post.created_at}>
+                                {formatDate(post.published_at || post.created_at)}
+                            </time>
                         </div>
                         <h1 className="text-5xl font-bold text-gray-900 mb-4 leading-tight">
                             {post.title}

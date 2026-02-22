@@ -10,14 +10,19 @@ interface BlogCardProps {
         slug: string;
         excerpt: string;
         featured_image?: string;
-        published_at: string;
+        published_at: string | null;
+        created_at: string;
         author_id: string;
     };
 }
 
 export default function BlogCard({ post }: BlogCardProps) {
-    const formatDate = (date: string) => {
-        return new Date(date).toLocaleDateString('en-US', {
+    const formatDate = (date: string | null) => {
+        if (!date) return '';
+        const d = new Date(date);
+        // Check if date is valid
+        if (isNaN(d.getTime())) return '';
+        return d.toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
@@ -42,7 +47,9 @@ export default function BlogCard({ post }: BlogCardProps) {
             <div className="p-6">
                 <div className="flex items-center text-sm text-gray-500 mb-3">
                     <Calendar className="h-4 w-4 mr-1" />
-                    <time dateTime={post.published_at}>{formatDate(post.published_at)}</time>
+                    <time dateTime={post.published_at || post.created_at}>
+                        {formatDate(post.published_at || post.created_at)}
+                    </time>
                 </div>
 
                 <Link href={`/blog/${post.slug}`}>

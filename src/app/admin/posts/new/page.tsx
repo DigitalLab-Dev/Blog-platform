@@ -122,6 +122,7 @@ export default function NewPostPage() {
                 meta_title: metaTitle || title,
                 meta_description: metaDescription || finalExcerpt,
                 author_id: user.id,
+                published_at: newStatus === 'published' ? new Date().toISOString() : null,
             };
 
             const { data, error } = await supabase

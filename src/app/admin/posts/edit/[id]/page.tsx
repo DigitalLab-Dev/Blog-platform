@@ -23,6 +23,7 @@ export default function EditPostPage() {
     const [metaTitle, setMetaTitle] = useState('');
     const [metaDescription, setMetaDescription] = useState('');
     const [status, setStatus] = useState<'draft' | 'published'>('draft');
+    const [publishedAt, setPublishedAt] = useState<string | null>(null);
     const [uploadingImage, setUploadingImage] = useState(false);
 
     useEffect(() => {
@@ -50,6 +51,7 @@ export default function EditPostPage() {
                 setMetaTitle(data.meta_title || '');
                 setMetaDescription(data.meta_description || '');
                 setStatus(data.status);
+                setPublishedAt(data.published_at);
             }
         } catch (error: any) {
             alert('Failed to load post: ' + error.message);
@@ -126,7 +128,7 @@ export default function EditPostPage() {
         try {
             const finalExcerpt = excerpt || (content ? generateExcerpt(content.content) : '');
 
-            const postData = {
+            const postData: any = {
                 title,
                 slug,
                 content: content || { type: 'doc', content: [] },
@@ -136,6 +138,11 @@ export default function EditPostPage() {
                 meta_title: metaTitle || title,
                 meta_description: metaDescription || finalExcerpt,
             };
+
+            // If being published for the first time, or if already published but has no date
+            if (newStatus === 'published' && !publishedAt) {
+                postData.published_at = new Date().toISOString();
+            }
 
             const { error } = await supabase
                 .from('posts')
