@@ -5,6 +5,11 @@ import Footer from "@/components/Footer";
 import Script from "next/script"; // 👈 added
 
 export const metadata: Metadata = {
+
+  metadataBase: new URL("https://theblogtide.com"),
+  alternates: {
+     canonical: "https://theblogtide.com",
+  },
   title: "The Blogtide | Insights, Stories & Expert Opinions",
   description:
     "Your go-to destination for insightful articles, expert opinions, and inspiring stories. Join our community of readers and discover content that matters.",
